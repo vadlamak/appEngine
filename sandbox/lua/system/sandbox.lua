@@ -61,7 +61,9 @@ sandboxed_env = {
 
 local utils = require "utils_3scale"
 local path = utils.split(ngx.var.request," ")[2]
+ngx.say(path)
 local user_script_file = ngx.re.match(path,[=[^\/aggr\/([a-zA-Z0-9-_]+)]=])[1]
+ngx.say(user_script_file)
 lc = loadfile(ngx.var.lua_user_scripts_path..user_script_file..".lua")
 
 if (lc == nil) then
