@@ -50,7 +50,7 @@ sandboxed_env = {
       sqrt = math.sqrt, tan = math.tan, tanh = math.tanh },
   os = { clock = os.clock, difftime = os.difftime, time = os.time },
   print = print,
-  utils = require "utils_3scale",
+  utils = require "lua/system/utils_3scale",
   cjson = require "cjson",
   ngx = ngx
 }
@@ -59,11 +59,17 @@ sandboxed_env = {
   Needs to file which file to lua based on the URL
 ]]--
 
-local utils = require "utils_3scale"
+local utils = require "lua/system/utils_3scale"
 local path = utils.split(ngx.var.request," ")[2]
+--local user_script_file = ngx.re.match(path,[=[^\/v1\/triggers\/([a-zA-Z0-9-_]+)]=])[1]
+local user_script_file = ngx.re.match(path,[=[^\/v1\/triggers\/(.*)]=])[1]
+
+ngx.say("path")
 ngx.say(path)
-local user_script_file = ngx.re.match(path,[=[^\/aggr\/([a-zA-Z0-9-_]+)]=])[1]
+ngx.say(ngx.var.request)
 ngx.say(user_script_file)
+ngx.exit(200)
+
 lc = loadfile(ngx.var.lua_user_scripts_path..user_script_file..".lua")
 
 if (lc == nil) then
