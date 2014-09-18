@@ -11,13 +11,19 @@ return function()
     local buff = res.body
    -- local response=zlib.inflate(buff)
     local stream_in = zlib.inflate(buff)
-    local result = stream_in:read("*a")
-     stream_in:close()
+    ngx.say(getmetatable(stream_in))
+    local content
+    if (stream_in==nil) then
+        content=res.body
+    else
+        content = stream_in:read("*a")
+        stream_in:close()
+    end
     --local response=zlib.version()
 
   --ngx.header.content_type = "text/html"
   --ngx.say(path.." rules!")
     --local result = cjson.decode(res.body)
-    ngx.say(result)
+    ngx.say(content)
   ngx.exit(ngx.HTTP_OK)
 end
