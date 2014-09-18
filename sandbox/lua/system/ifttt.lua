@@ -22,6 +22,7 @@ out. This will kill automatically any long running requests. Tuning this paramet
 depends on the complexity of the scripts that you allow to run. 5000 is plenty for 
 the sentence_with_highest_word.lua 
 
+]]--
 
 sandboxed_env = {
   ipairs = ipairs,
@@ -52,14 +53,13 @@ sandboxed_env = {
   utils = require "lua/system/utils_3scale",
   ngx = ngx
 }
-]]--
 
 --[[
   Needs to file which file to lua based on the URL
 ]]--
 
 local utils = require "lua/system/utils_3scale"
-local cjson = require "cjson"
+--local cjson = require "cjson"
 local path = utils.split(ngx.var.request," ")[2]
 --local user_script_file = ngx.re.match(path,[=[^\/v1\/triggers\/([a-zA-Z0-9-_]+)]=])[1]
 local theSplit = ngx.re.match(path,[=[^\/v1\/geocode\/([-+]?[0-9]*\.?[0-9]+)\/([-+]?[0-9]*\.?[0-9]+)\/triggers\/(.*)\.json]=])
@@ -76,6 +76,10 @@ ngx.say(user_script_file)
 ]]--
 
 lc = loadfile(ngx.var.lua_user_scripts_path..user_script_file..".lua")
+ngx.say(ngx.var.lua_user_scripts_path..user_script_file..".lua")
+ngx.say("hello?")
+--dofile(ngx.var.lua_user_scripts_path..user_script_file..".lua")
+--lc=nil
 
 if (lc == nil) then
   ngx.exit(ngx.HTTP_NOT_FOUND)
@@ -88,16 +92,18 @@ end
 
 local timeout_response = function()
   debug.sethook()
-  error("The lua script " .. ngx.var.function_to_call_file .. " has timed out!!")
+  error("The lua script tem_exceeds has timed out!!")
 end
+--pcall(user_function)
+user_function();
+ngx.say("called user func")
 
-debug.sethook(timeout_response, "", 5000)
 --[[
+debug.sethook(timeout_response, "", 5000)
 setfenv(user_function, sandboxed_env)
 local res_user_function = pcall(user_function)
 if not res_user_function then
-  error("There was an error running " .. ngx.var.function_to_call_file)
+  error("There was an error running temp_exceeds")
 end
 debug.sethook()
-
---]]
+]]--
