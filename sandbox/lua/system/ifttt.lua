@@ -9,23 +9,22 @@ local lat  = theSplit[1]
 local lon = theSplit[2]
 local user_script_file = theSplit[3]
 
+local post_data = ngx.req.get_body_data()
+
 local atomicApi = getProductInfo.getAtomicApi(user_script_file)
-    --ngx.say(type(getProductInfo))
-    ngx.say(atomicApi)
+local postData = getProductInfo.getPost(post_data, "temperature")
+local apiData = getProductInfo.readAtomicApi(atomicApi, postData['lat'], postData['lng'])
 
-lc = loadfile(ngx.var.lua_user_scripts_path..user_script_file..".lua")
---ngx.say(ngx.var.lua_user_scripts_path..user_script_file..".lua")
---ngx.say("hello?")
+    
+process_function = loadfile(ngx.var.lua_user_scripts_path..user_script_file..".lua")
+ngx.say(ngx.var.lua_user_scripts_path..user_script_file..".lua")
 
-local args = ngx.req.get_uri_args()
---for k, v in pairs(args) do ngx.say(k,v) end
-
-if (lc == nil) then
+if (process_function == nil) then
   ngx.exit(ngx.HTTP_NOT_FOUND)
 else
-  user_function = lc()
-  if (user_function == nil) then
-    ngx.exit(ngx.HTTP_NOT_FOUND)
+  readAtomicData = process_function()
+  if (process_trigger_data == nil) then
+    ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
   end
 end
 
@@ -33,4 +32,4 @@ local timeout_response = function()
   debug.sethook()
   error("The lua script tem_exceeds has timed out!!")
 end
-user_function();
+process_trigger_data(apiData, postData['val'],postData['unit']);
