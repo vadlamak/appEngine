@@ -17,7 +17,8 @@ end
 
 function _M.readAtomicApi(apiname,lat,lng)
 
-    local uri = string.format("/api/da76745e63b41051/%s/q/%f,%f.json",apiname,lat,lng)
+    --local uri = string.format("/api/da76745e63b41051/%s/q/%f,%f.json",apiname,lat,lng)
+    local uri = string.format("/v1/geocode/%f/%f/%s.json?language=en-US&apiKey=51222bf098c6a59c4ee6af8d5a57128b&units=e",lat,lng,apiname)
     local res = ngx.location.capture(uri) 
 
     local stream_in = zlib.inflate(res.body) 
