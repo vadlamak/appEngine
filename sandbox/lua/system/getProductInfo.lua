@@ -18,7 +18,6 @@ end
 function _M.readAtomicApi(apiname,lat,lng)
 
     local uri = string.format("/api/da76745e63b41051/%s/q/%f,%f.json",apiname,lat,lng)
-    --local res = ngx.location.capture("/api/da76745e63b41051/geolookup/q/94110.json") 
     local res = ngx.location.capture(uri) 
 
     local stream_in = zlib.inflate(res.body) 
@@ -28,10 +27,14 @@ function _M.readAtomicApi(apiname,lat,lng)
     if (content==nil) then
         ngx.exit(ngx.HTTP_GATEWAY_TIMEOUT)
     end
+    
+    jsonTable=assert(cjson.decode(content))
 
-    ngx.say(content)
+    
 
-  return content
+    --ngx.say(content)
+
+  return jsonTable
 end
 
 function _M.getPost(post_data, trigger_field)
